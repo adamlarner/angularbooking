@@ -67,7 +67,7 @@ $ docker build -t angularbooking .
 You can also build directly from the git repository:
 
 ```sh
-docker build -t angularbooking https://github.com/adamlarner/angularbooking#master
+docker build -t angularbooking https://github.com/adamlarner/angularbooking.git#master
 ```
 
 To run the image (mapping container port 5000 to host port 80):
