@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-sm-9 text-center">
+    <div *ngFor="let row of allocationArray; let i = index">
+      <div *ngIf="rowIsleExists(i)" [style.height.%]="size" [style.width.%]="100">&nbsp;</div>
+      <span *ngFor="let column of row; let j = index">
+        <span style="display: inline-block; max-width: 50px;" *ngIf="columnIsleExists(j)" [style.height.%]="size" [style.width.%]="size">&nbsp;</span>
+        <app-allocation-unit  [size]="size" [selected]="column.selected" [available]="column.available" [colour]="column.colour" (click)="onAllocationClick(i,j)"></app-allocation-unit>
+      </span>
+    </div>
+  </div>
+  <div class="col-sm-3 border-left pr-4">
+    <hr class="d-block d-sm-none" />
+
+    <!-- click/tap to toggle allocation type -->
+    <div>
+      <span style="display: flex; width: 100%;">
+        Click/Tap desired seat on the seating plan to cycle through admission types
+      </span>
+      <hr />
+    </div>
+    <!-- create colour-keyed details for each pricing strategy item selected -->
+    <div *ngFor="let priceItem of pricing.pricingStrategyItems; let i = index">
+      <span style="display: flex; width: 100%;">
+        <i class="fa fa-lg fa-circle border border-dark rounded-circle text-center pt-2"
+           style="width: 32px; height:32px; background-color: lightgray;"
+           [style.color]="selectedHighlights[i]"></i>
+        <span class="ml-2 mt-1">{{priceItem.name}}</span>
+        <span class="ml-auto">£{{priceItem.price.toFixed(2)}}</span>
+      </span>
+      <hr />
+    </div>
+    <!-- unavailable - shown as red -->
+    <div>
+      <span style="display: flex; width: 100%;">
+        <i class="fa fa-lg fa-circle border border-dark rounded-circle text-center pt-2"
+           style="width: 32px; height:32px; background-color: lightgray; color: red;"></i>
+        <span class="ml-2 mt-1">Unavailable</span>
+      </span>
+      <hr />
+    </div>
+    <span style="display: flex; width: 100%;">
+      <span class="ml-2 mt-1">Total</span>
+      <span class="ml-auto">£{{calculateBookingTotal().toFixed(2)}}</span>
+    </span>
+  </div>
+  
+</div>

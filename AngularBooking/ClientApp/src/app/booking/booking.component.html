@@ -1,0 +1,205 @@
+<p-toast position="top-center"></p-toast>
+<nav class="navbar navbar-light bg-light">
+  <a href="#" class="navbar-brand">Booking Site</a>
+  <div>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/site">Return to site</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div>
+  <div class="border rounded m-4">
+    <p-steps [model]="items" [(activeIndex)]="activeIndex" styleClass="steps-booking"></p-steps>
+  </div>
+  <div style="display: flex; justify-content: space-between; flex-direction: column;">
+    <!-- content -->
+    <div class="m-4">
+      <div [hidden]="activeIndex != 0">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-5 text-center my-auto">
+              <h6>You are currently {{ loggedIn ? "logged in." : "booking as a guest." }}</h6>
+              <div *ngIf="loggedIn">
+                <p>
+                  Once this booking is complete, it will be available for review within your profile.
+                </p>
+              </div>
+              <div *ngIf="!loggedIn">
+                <p>
+                  To keep track of any future bookings, you can create an account from the main page prior to continuing with this booking.
+                  If you have already have an account, please click the login button below to sign-in.
+                </p>
+                <button class="btn btn-success" (click)="login()">Login</button>
+              </div>
+              <hr class="d-none d-block d-sm-none" />
+            </div>
+            <div class="col-sm-5 offset-sm-1" [formGroup]="customerForm">
+              <div class="form-group">
+                <label for="contactEmail">Email Address</label>
+                <input class="form-control" id="contactEmail" formControlName="contactEmail" />
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input class="form-control" id="firstName" formControlName="firstName" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input class="form-control" id="lastName" formControlName="lastName" />
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Address Details</label>
+                <input class="form-control mb-2" id="address1" formControlName="address1" placeholder="Street" />
+                <input class="form-control mb-2" id="address2" formControlName="address2" placeholder="Town" />
+                <input class="form-control mb-2" id="address3" formControlName="address3" placeholder="City" />
+                <input class="form-control mb-2" id="address4" formControlName="address4" placeholder="Region" />
+                <input class="form-control mb-2" id="address5" formControlName="address5" placeholder="Postcode" />
+              </div>
+
+              <div class="form-group">
+                <label for="contactPhone">Contact Phone</label>
+                <input class="form-control" id="contactPhone" formControlName="contactPhone" />
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+        
+      </div>
+
+      <div [hidden]="activeIndex != 1">
+        <div *ngIf="showingInfo">
+          <app-allocation [rows]="showingInfo.showing.room.rows"
+                          [columns]="showingInfo.showing.room.columns"
+                          [allocations]="allocationInfo"
+                          [isles]="showingInfo.isles"
+                          [pricing]="showingInfo.showing.pricingStrategy"
+                          (onAllocationChange)="updateBookingAllocations($event)">
+
+          </app-allocation>
+        </div>
+
+      </div>
+
+      <div [hidden]="activeIndex != 2">
+        <div style="width:480px; height:480px; padding-top:220px;" class="text-center border rounded m-auto">
+          Payment System Here
+        </div>
+      </div>
+
+      <div *ngIf="showingInfo != null" [hidden]="activeIndex != 3">
+        <div class="container">
+          <h4>Summary</h4>
+          <hr />
+          <div class="row">
+            <div class="col-sm-6 border-right">
+              <h5>Event</h5>
+              <table class="w-100">
+                <tbody>
+                  <tr>
+                    <td><strong>Event</strong></td>
+                    <td class="text-right">{{ showingInfo.showing.event.name }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Duration</strong></td>
+                    <td class="text-right">{{ showingInfo.showing.event.duration }} minutes</td>
+                  </tr>
+                </tbody>
+              </table>
+              <hr />
+              <h5>Venue</h5>
+              <table class="w-100">
+                <tbody>
+                  <tr>
+                    <td><strong>Venue</strong></td>
+                    <td class="text-right">{{ showingInfo.venue.name }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Room</strong></td>
+                    <td class="text-right">{{ showingInfo.showing.room.name }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Contact Number</strong></td>
+                    <td class="text-right">{{ showingInfo.venue.contactPhone }}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Website</strong></td>
+                    <td class="text-right">{{ showingInfo.venue.website }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col-sm-6">
+              <hr class="d-block d-sm-none" />
+              <h5>Booking</h5>
+              <table class="w-100">
+                <thead>
+                  <tr>
+                    <th>Admission</th>
+                    <th>Quantity</th>
+                    <th class="text-right">Sub-total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let pricing of showingInfo.showing.pricingStrategy.pricingStrategyItems">
+                    <tr *ngIf="allocationsValid() && bookingAllocations.groups[pricing.id]">
+                      <td><span>{{ bookingAllocations.groups[pricing.id].name }}</span></td>
+                      <td><span>{{ bookingAllocations.groups[pricing.id].quantity }}</span></td>
+                      <td class="text-right">{{ bookingAllocations.groups[pricing.id].total.toFixed(2) }}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+                <tfoot>
+                  <tr *ngIf="allocationsValid()">
+                    <td></td>
+                    <td><strong>Total</strong></td>
+                    <td class="text-right">{{ bookingAllocations.total.toFixed(2) }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+              <hr />
+              <div class="m-5 text-center">
+                <button class="btn btn-lg btn-success" [disabled]="isBooking" (click)="confirmBooking()">Confirm and Book</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <hr />
+    </div>
+
+    <!-- navigation -->
+    <div class="m-4 text-center">
+      <div *ngIf="activeIndex == 0">
+        <button class="btn btn-info" [disabled]="!customerForm.valid" (click)="activeIndex = 1">Next</button>
+      </div>
+
+      <div *ngIf="activeIndex == 1">
+        <button class="btn btn-info m-2" (click)="activeIndex = 0">Previous</button>
+        <button class="btn btn-info m-2" [disabled]="!allocationsValid()" (click)="activeIndex = 2">Next</button>
+      </div>
+
+      <div *ngIf="activeIndex == 2">
+        <button class="btn btn-info m-2" (click)="activeIndex = 1">Previous</button>
+        <button class="btn btn-info m-2" (click)="activeIndex = 3">Next</button>
+      </div>
+
+      <div *ngIf="activeIndex == 3">
+        <button class="btn btn-info m-2" (click)="activeIndex = 2">Previous</button>
+      </div>
+    </div>
+  </div>
+  
+</div>
+

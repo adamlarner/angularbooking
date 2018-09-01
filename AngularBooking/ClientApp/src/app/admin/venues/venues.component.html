@@ -1,0 +1,201 @@
+<p-toast position="top-center"></p-toast>
+<p-table #dt [columns]="cols" [value]="venues" selectionMode="single" [paginator]="true" [rows]="15">
+  <ng-template pTemplate="caption">
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <div style="text-align:left">
+          <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add"></button>
+        </div>
+      </div>
+      <div class="ui-g-8">
+        <div style="text-align: right">
+          <i class="fa fa-search" style="margin:4px 4px 0 0">&nbsp;</i>
+          <input type="text" pInputText size="25" placeholder="Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+        {{col.header}}
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+      <th style="width: 3em;"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+      <td *ngFor="let col of columns">
+        {{ rowData[col.field] }}
+      </td>
+      <td class="text-center"><a (click)="onRowEdit({ data: rowData })"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog header="Venue Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="800" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="venueForm" [formGroup]="venueForm">
+    <ngb-accordion #acc="ngbAccordion" [closeOthers]="true" [destroyOnHide]="false" activeIds="basicPanel">
+      <ngb-panel id="basicPanel">
+        <ng-template ngbPanelTitle>
+          Basic&nbsp;
+          <i class="text-danger fa fa-exclamation-circle" *ngIf="!basicValid" data-toggle="tooltip" title="Contains invalid fields"></i>
+          <i class="text-success fa fa-check-circle" *ngIf="basicValid"></i>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="name">Name</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="name" formControlName="name" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="description">Description</label>
+            </div>
+            <div class="ui-g-8">
+              <textarea class="form-control" pInputTextarea id="description" formControlName="description"></textarea>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="image">Image</label>
+            </div>
+            <div class="ui-g-8">
+              <p-fileUpload #venueImageFileUpload mode="basic" name="myfile[]" accept="image/*" (onSelect)="onImageFileSelect($event)" [chooseLabel]="venueForm.controls.image.value ? '- Image Set -' : 'Choose'"></p-fileUpload>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="facilities">Facilities</label>
+            </div>
+            <div class="ui-g-8">
+              <p-multiSelect [options]="facilityOptions" formControlName="facilities"></p-multiSelect>
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="latLong">Lat/Long</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="latLong" formControlName="latLong" />
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel id="addressPanel">
+        <ng-template ngbPanelTitle>
+          Address/Contact&nbsp;
+          <i class="text-danger fa fa-exclamation-circle" data-toggle="tooltip" title="Contains invalid fields" *ngIf="!addressValid"></i>
+          <i class="text-success fa fa-check-circle" *ngIf="addressValid"></i>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="address1">Address 1</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="address1" formControlName="address1" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="address2">Address 2</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="address2" formControlName="address2" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="address3">Address 3</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="address3" formControlName="address3" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="address4">Address 4</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="address4" formControlName="address4" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="address5">Address 5</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="address5" formControlName="address5" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="contactPhone">Contact Phone</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="contactPhone" formControlName="contactPhone" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="website">Website</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="website" formControlName="website" />
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+      <ngb-panel id="socialPanel">
+        <ng-template ngbPanelTitle>
+          Social Media&nbsp;
+          <i class="text-danger fa fa-exclamation-circle" *ngIf="!socialValid" data-toggle="tooltip" title="Contains invalid fields"></i>
+          <i class="text-success fa fa-check-circle" *ngIf="socialValid"></i>
+        </ng-template>
+        <ng-template ngbPanelContent>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="facebook">Facebook</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="facebook" formControlName="facebook" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="twitter">Twitter</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="twitter" formControlName="twitter" />
+            </div>
+          </div>
+          <div class="ui-g-12">
+            <div class="ui-g-4">
+              <label class="col-form-label" for="instagram">Instagram</label>
+            </div>
+            <div class="ui-g-8">
+              <input class="form-control" pInputText id="instagram" formControlName="instagram" />
+            </div>
+          </div>
+        </ng-template>
+      </ngb-panel>
+    </ngb-accordion>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newVenue" type="button" pButton icon="fa fa-close" (click)="delete()" label="Delete"></button>
+      <button [disabled]="!venueForm.valid" type="button" pButton icon="fa fa-check" (click)="save()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Room Details" [(visible)]="displayRoomDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="800" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="venueForm" [formGroup]="venueForm">
+    
+  </div>
+</p-dialog>

@@ -1,0 +1,146 @@
+<p-toast position="top-center" ></p-toast>
+<p-table #dt [columns]="pricingStrategyCols" [value]="pricingStrategies" selectionMode="single" [paginator]="true" [rows]="15" dataKey="name">
+  <ng-template pTemplate="caption">
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <div style="text-align:left">
+          <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAddPricingStrategy()" label="Add"></button>
+        </div>
+      </div>
+      <div class="ui-g-8">
+        <div style="text-align: right">
+          <i class="fa fa-search" style="margin:4px 4px 0 0">&nbsp;</i>
+          <input type="text" pInputText size="25" placeholder="Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th style="width: 3em"></th>
+      <th [pSortableColumn]="name">
+        Name
+        <p-sortIcon [field]="name"></p-sortIcon>
+      </th>
+      <th></th>
+      <th style="width: 3em"></th>
+      <th style="width: 3em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+    <tr [pSelectableRow]="rowData">
+      <td>
+        <a href="#" [pRowToggler]="rowData">
+          <i [ngClass]="expanded ? 'pi pi-chevron-circle-down' : 'pi pi-chevron-circle-right'" style="font-size: 1.25em"></i>
+        </a>
+      </td>
+      <td>{{rowData["name"]}}</td>
+      <td></td>
+      <td class="text-center"><a (click)="showDialogToAddPricingStrategyItem(rowData.id)"><i class="fa fa-lg fa-plus"></i></a></td>
+      <td class="text-center"><a (click)="onPricingStrategyRowEdit({ data: rowData })"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+    <tr>
+      <td></td>
+      <td><strong style="font-size:12px;">Name</strong></td>
+      <td><strong style="font-size:12px;">Price</strong></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr *ngFor="let itemData of getPricingItemsByStrategyId(rowData.id)">
+      <td></td>
+      <td>{{ itemData.name }}</td>
+      <td>{{ itemData.price }}</td>
+      <td></td>
+      <td><a (click)="onPricingStrategyItemRowEdit({ data: itemData }, rowData.id)"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+    <tr>
+      <!--<td [attr.colspan]="columns.length + 2">
+        <div class="ui-g ui-fluid" style="font-size:16px;padding:20px">
+          <div class="ui-g-12 ui-md-3" style="text-align:center">
+            
+          </div>
+          <div class="ui-g-12 ui-md-9">
+            <div class="ui-g">
+              <div class="ui-g-12">
+                <b>Vin:</b> 
+              </div>
+              <div class="ui-g-12">
+                <b>Year:</b>
+              </div>
+              <div class="ui-g-12">
+                <b>Brand:</b>
+              </div>
+              <div class="ui-g-12">
+                <b>Color:</b> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </td>-->
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog header="Pricing Details" [(visible)]="displayPricingStrategyDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="600" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="pricingForm" [formGroup]="pricingForm">
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="name">Name</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" pInputText id="name" formControlName="name" />
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="description">Description</label>
+      </div>
+      <div class="ui-g-8">
+        <textarea class="form-control" pInputTextarea id="description" formControlName="description"></textarea>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newPricing" type="button" pButton icon="fa fa-close" (click)="deletePricingStrategy()" label="Delete"></button>
+      <button [disabled]="!pricingForm.valid" type="button" pButton icon="fa fa-check" (click)="savePricingStrategy()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Pricing Item Details" [(visible)]="displayPricingStrategyItemDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="600" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="pricingForm" [formGroup]="pricingForm">
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="name">Name</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" pInputText id="name" formControlName="name" />
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="description">Description</label>
+      </div>
+      <div class="ui-g-8">
+        <textarea class="form-control" pInputTextarea id="description" formControlName="description"></textarea>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="price">Price</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" pInputText id="price" formControlName="price" />
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newPricing" type="button" pButton icon="fa fa-close" (click)="deletePricingStrategyItem()" label="Delete"></button>
+      <button [disabled]="!pricingForm.valid" type="button" pButton icon="fa fa-check" (click)="savePricingStrategyItem()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>

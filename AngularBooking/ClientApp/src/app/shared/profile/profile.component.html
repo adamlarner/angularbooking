@@ -1,0 +1,88 @@
+<div class="modal-body">
+  <div class="modal-header">
+    <h3 class="modal-title">Profile <small>{{contactEmail.value}}</small></h3>
+    <button type="button" class="close" (click)="closeModal()">
+      <span class="fa fa-lg fa-times"></span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+
+      <div class="col-5 border-right" [formGroup]="profileForm">
+        <h5>Contact Details</h5>
+        <hr />
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input class="form-control" id="firstName" formControlName="firstName" />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input class="form-control" id="lastName" formControlName="lastName" />
+        </div>
+        <div class="form-group">
+          <label>Address Details</label>
+          <input class="form-control mb-2" id="address1" formControlName="address1" placeholder="Street" />
+          <input class="form-control mb-2" id="address2" formControlName="address2" placeholder="Town" />
+          <input class="form-control mb-2" id="address3" formControlName="address3" placeholder="City" />
+          <input class="form-control mb-2" id="address4" formControlName="address4" placeholder="Region" />
+          <input class="form-control mb-2" id="address5" formControlName="address5" placeholder="Postcode" />
+        </div>
+
+        <div class="form-group">
+          <label for="contactPhone">Contact Phone</label>
+          <input class="form-control" id="contactPhone" formControlName="contactPhone" />
+        </div>
+        <hr />
+        <div>
+          <button class="btn btn-lg btn-primary btn-block" (click)="update()">Update</button>
+        </div>
+        
+      </div>
+
+      <div class="col-7">
+        <div class="d-flex align-items-start flex-column h-100">
+          <h5 class="mb-3">Bookings</h5>
+          <div *ngFor="let booking of filteredBookings" class="card w-100 mb-3">
+            <div class="card-header">
+              <div class="row">
+                <div class="col-6">
+                  Reference: {{ booking.id }}
+                </div>
+                <div class="col-6 text-right">
+                  <span *ngIf="booking.status == 0">Payment Pending</span>
+                  <span *ngIf="booking.status == 1">Payment Complete</span>
+                  <span *ngIf="booking.status == 2">Cancelled</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-body" *ngIf="getShowingInfo(booking.showingId);let showingInfo">
+              <div class="row">
+                <div class="col-6">
+                  <h5 class="card-title text">{{ showingInfo.event }}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{ showingInfo.venue }}</h6>
+                  <h6 class="card-subtitle mb-2 text-muted">{{ showingInfo.time }}</h6>
+                  <p class="card-text"></p>
+                </div>
+                <div class="col-6 text-right" *ngIf="booking.status != 2">
+                  <h6>Total: £{{ booking.totalPrice().toFixed(2) }}</h6>
+                  <a href="#" class="card-link" (click)="cancelBooking(booking.id)">Cancel?</a>
+                </div>
+                <div class="col-6 text-right" *ngIf="booking.status == 2">
+                  Cancelled
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-auto mx-auto" *ngIf="filteredBookings">
+            <ngb-pagination class="m-auto" [collectionSize]="bookings.length" [(page)]="page" (pageChange)="bookingPageChanged($event)"></ngb-pagination>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+

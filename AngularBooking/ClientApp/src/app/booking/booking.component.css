@@ -1,0 +1,23 @@
+.ui-steps .ui-steps-item {
+  width: 25%;
+}
+
+.ui-steps.steps-booking .ui-steps-item .ui-steps-number {
+  background-color: #0081c2;
+  color: #FFFFFF;
+  display: inline-block;
+  width: 36px;
+  border-radius: 50%;
+  margin-top: -14px;
+  margin-bottom: 10px;
+}
+
+/* remove vertical seperating border when screen-size is small */
+@media (max-width:767px) {
+  .border-left {
+    border: 0px solid !important
+  }
+  .border-right {
+    border: 0px solid !important
+  }
+}

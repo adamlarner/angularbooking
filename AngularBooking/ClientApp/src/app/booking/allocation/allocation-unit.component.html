@@ -1,0 +1,7 @@
+<div class="allocation-unit p-1" [style.width.%]="size" [style.height.%]="size">
+  <div *ngIf="!available" class="border border-dark rounded bg-danger">&nbsp;</div>
+  <div *ngIf="!selected && available" class="border border-dark rounded">&nbsp;</div>
+  <div *ngIf="selected" class="border border-dark rounded" [style.background-color]="colour">&nbsp;</div>
+
+</div>
+

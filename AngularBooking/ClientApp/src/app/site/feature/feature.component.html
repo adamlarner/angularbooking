@@ -1,0 +1,28 @@
+<!--<div class="jumbotron jumbotron-fluid">
+  <div class="container-fluid">
+    <h1>Feature Here!</h1>
+    <p>Feature information displayed here!</p>
+  </div>
+</div>-->
+<div class="d-none d-sm-block">
+  <ngb-carousel *ngIf="features && features.length > 0">
+    <ng-container *ngFor="let feature of features">
+      <ng-template ngbSlide>
+        <a [href]="feature.link">
+          <img [src]="feature.image" alt="Random first slide" style="width:100%;">
+        </a>
+        <div class="carousel-caption">
+          <h3>{{ feature.title }}</h3>
+          <p>{{ feature.detail }}</p>
+        </div>
+      </ng-template>
+    </ng-container>
+    
+  </ngb-carousel>
+</div>
+  
+  
+
+  
+
+

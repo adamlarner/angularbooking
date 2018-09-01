@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row p-4">
+        <div class="col-md-4 p-1">
+          <div class="input-group">
+            <div class="input-group-prepend btn-group btn-group-toggle" ngbRadioGroup ngDefaultControl [(ngModel)]="filterBy" (ngModelChange)="onFilterChange($event)">
+              <label ngbButtonLabel class="btn-outline-secondary">
+                <input ngbButton type="radio" value="event"> Event
+              </label>
+              <label ngbButtonLabel class="btn-outline-secondary">
+                <input ngbButton type="radio" value="venue"> Venue
+              </label>
+            </div>
+            <select *ngIf="filterBy == 'event'" class="form-control" [(ngModel)]="filterId" (ngModelChange)="onFilterChange($event)">
+              <option *ngFor="let event of eventList" [ngValue]="event.id">{{ event.name }}</option>
+            </select>
+            <select *ngIf="filterBy == 'venue'" class="form-control" [(ngModel)]="filterId" (ngModelChange)="onFilterChange($event)">
+              <option *ngFor="let venue of venueList" [ngValue]="venue.id">{{ venue.name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6 offset-md-2 p-1">
+          <div class="input-group float-md-right">
+            <input class="form-control" placeholder="yyyy-mm-dd" name="dp" (dateSelect)="onFilterChange($event)" [(ngModel)]="filterDate" ngbDatepicker #d="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" (click)="d.toggle()" type="button">
+                <i class="fa fa-calendar"></i>
+              </button>
+              <button class="btn btn-outline-secondary" (click)="setFilterDateToday(d)" type="button">
+                Today
+              </button>
+              <button class="btn btn-outline-secondary" (click)="setFilterDateTomorrow(d)" type="button">
+                Tomorrow
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div *ngIf="!entries || entries.length == 0" class="d-flex align-items-center" style="height:70vh;">
+          <div class="mx-auto align-self-center">
+            <div class="row">
+              <div class="col-sm-6 offset-sm-3 text-center">
+                There are no showings available at this time. Please ensure that you've selected an event/venue from the dropdown.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngFor="let entry of entries">
+          <app-showing-list-entry [model]="entry"></app-showing-list-entry>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

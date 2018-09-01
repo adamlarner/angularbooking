@@ -1,0 +1,94 @@
+<p-toast position="top-center"></p-toast>
+<p-table #dt [columns]="cols" [value]="features" selectionMode="single" [paginator]="true" [rows]="15">
+  <ng-template pTemplate="caption">
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <div style="text-align:left">
+          <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add"></button>
+        </div>
+      </div>
+      <div class="ui-g-8">
+        <div style="text-align: right">
+          <i class="fa fa-search" style="margin:4px 4px 0 0">&nbsp;</i>
+          <input type="text" pInputText size="25" placeholder="Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th *ngFor="let col of columns" [pSortableColumn]="col.field">
+        {{col.header}}
+        <p-sortIcon [field]="col.field"></p-sortIcon>
+      </th>
+      <th style="width: 3em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+      <td *ngFor="let col of columns">
+        {{rowData[col.field]}}
+      </td>
+      <td class="text-center"><a (click)="onRowEdit({ data: rowData })"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog header="Feature Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="600" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="featureForm" [formGroup]="featureForm">
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="name">Name</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" pInputText id="name" formControlName="name" />
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="title">Title</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" type="text" pInputText id="title" formControlName="title" />
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="detail">Detail</label>
+      </div>
+      <div class="ui-g-8">
+        <textarea class="form-control" pInputTextarea id="detail" formControlName="detail"></textarea>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="link">Link</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" type="text" pInputText id="link" formControlName="link" />
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="image">Image</label>
+      </div>
+      <div class="ui-g-8">
+        <p-fileUpload #imageFileUpload mode="basic" name="myfile[]" accept="image/*" (onSelect)="onImageFileSelect($event)" [chooseLabel]="featureForm.controls.image.value ? '- Image Set -' : 'Choose'"></p-fileUpload>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="order">Order</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" pInputText type="number" id="order" formControlName="order" />
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newFeature" type="button" pButton icon="fa fa-close" (click)="delete()" label="Delete"></button>
+      <button [disabled]="!featureForm.valid" type="button" pButton icon="fa fa-check" (click)="save()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>

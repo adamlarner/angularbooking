@@ -1,0 +1,160 @@
+<p-toast position="top-center"></p-toast>
+<p-table #dt [columns]="bookingCols" [value]="bookings" selectionMode="single" [paginator]="true" [rows]="15" dataKey="id">
+  <ng-template pTemplate="caption">
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <div style="text-align:left">
+          <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAddBooking()" label="Add"></button>
+        </div>
+      </div>
+      <div class="ui-g-8">
+        <div style="text-align: right">
+          <i class="fa fa-search" style="margin:4px 4px 0 0">&nbsp;</i>
+          <input type="text" pInputText size="25" placeholder="Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th style="width: 3em"></th>
+      <th [pSortableColumn]="id">
+        Booking Id
+        <p-sortIcon [field]="id"></p-sortIcon>
+      </th>
+      <th [pSortableColumn]="event">
+        Event
+        <p-sortIcon [field]="event"></p-sortIcon>
+      </th>
+      <th [pSortableColumn]="venue">
+        Venue
+        <p-sortIcon [field]="venue"></p-sortIcon>
+      </th>
+      <th [pSortableColumn]="room">
+        Room
+        <p-sortIcon [field]="room"></p-sortIcon>
+      </th>
+      <th [pSortableColumn]="time">
+        Time
+        <p-sortIcon [field]="time"></p-sortIcon>
+      </th>
+      <th style="width: 3em"></th>
+      <th style="width: 3em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns" let-expanded="expanded">
+    <tr [pSelectableRow]="rowData" *ngIf="getShowingInfoById(rowData['showingId']); let showingInfo">
+      <td>
+        <a href="#" [pRowToggler]="rowData">
+          <i [ngClass]="expanded ? 'pi pi-chevron-circle-down' : 'pi pi-chevron-circle-right'" style="font-size: 1.25em"></i>
+        </a>
+      </td>
+      <td>{{rowData.id}}</td>
+      <td>{{showingInfo.event}}</td>
+      <td>{{showingInfo.venue}}</td>
+      <td>{{showingInfo.room}}</td>
+      <td>{{showingInfo.time}}</td>
+      <td class="text-center"><a (click)="showDialogToAddBookingItem(rowData.id)"><i class="fa fa-lg fa-plus"></i></a></td>
+      <td class="text-center"><a (click)="onBookingRowEdit({ data: rowData })"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+    <tr>
+      <td></td>
+      <td><strong style="font-size:12px;">Location</strong></td>
+      <td><strong style="font-size:12px;">Agreed Price</strong></td>
+      <td></td>
+    </tr>
+    <tr *ngFor="let itemData of getBookingItemsByBookingId(rowData.id)">
+      <td></td>
+      <td>{{ itemData.locationName }}</td>
+      <td>{{ itemData.agreedPrice }}</td>
+      <td><a (click)="onBookingItemRowEdit({ data: itemData }, rowData.id)"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+    <tr></tr>
+  </ng-template>
+</p-table>
+
+<p-dialog header="Booking Details" [(visible)]="displayBookingDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="600" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="bookingForm" [formGroup]="bookingForm">
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="status">Status</label>
+      </div>
+      <div class="ui-g-8">
+        <select class="form-control" formControlName="status">
+          <option [value]="0">Payment Pending</option>
+          <option [value]="1">Payment Complete</option>
+          <option [value]="2">Cancelled</option>
+        </select>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="customerId">Customer</label>
+      </div>
+      <div class="ui-g-8">
+        <select class="form-control" formControlName="customerId">
+          <option *ngFor="let customer of customers" [value]="customer.id">{{ customer.firstName + " " + customer.lastName }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="showingId">Showing</label>
+      </div>
+      <div class="ui-g-8">
+        <select class="form-control" formControlName="showingId">
+          <optgroup *ngFor="let showing of showings" [label]="showing.event + ' - ' + showing.venue">
+            <option *ngFor="let showingOption of showing.showingOptions" [value]="showingOption.id">{{showingOption.room + " - " + showingOption.time}}</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newBooking" type="button" pButton icon="fa fa-close" (click)="deleteBooking()" label="Delete"></button>
+      <button [disabled]="!bookingForm.valid" type="button" pButton icon="fa fa-check" (click)="saveBooking()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+<p-dialog header="Booking Item Details" [(visible)]="displayBookingItemDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="600" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="bookingItemForm" [formGroup]="bookingItemForm">
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="location">Location</label>
+      </div>
+      <div class="ui-g-8">
+        <select class="form-control" formControlName="location">
+          <option *ngFor="let available of availability" [value]="available.value">{{available.location}}</option>
+        </select>
+        <!--<input class="form-control" pInputText id="location" formControlName="location" />-->
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="agreedPrice">Agreed Price</label>
+      </div>
+      <div class="ui-g-8">
+        <input type="number" class="form-control" pInputText id="agreedPrice" formControlName="agreedPrice" />
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="agreedPriceName">Agreed Price Name</label>
+      </div>
+      <div class="ui-g-8">
+        <input class="form-control" pInputText id="agreedPriceName" formControlName="agreedPriceName" />
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newBookingItem" type="button" pButton icon="fa fa-close" (click)="deleteBookingItem()" label="Delete"></button>
+      <button [disabled]="!bookingItemForm.valid" type="button" pButton icon="fa fa-check" (click)="saveBookingItem()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>

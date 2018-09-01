@@ -1,0 +1,60 @@
+<div>
+  <p-toast position="top-center"></p-toast>
+  <div class="text-center">
+    <div class="row fixed-height rounded-border">
+      <div class="col-md-4 offset-md-2 align-self-center">
+        <img class="mb-4" src="https://getbootstrap.com/docs/4.1/assets/brand/bootstrap-solid.svg" width="72" height="72" />
+        <h1 class="h3 mb-3">Please Fill In The Form To Register</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa.
+        </p>
+        <button class="btn btn-outline-primary" (click)="cancel()">Cancel</button>
+      </div>
+      <div class="col-md-4 align-self-center">
+        <div class="form-register" [formGroup]="registrationFormGroup">
+          <label for="inputEmail" class="sr-only">Email Address</label>
+          <input type="email" name="inputEmail" class="form-control" placeholder="Email address" formControlName="email"
+                 [ngClass]="{
+                    'is-invalid': registrationFormGroup.controls.email.invalid && registrationFormGroup.controls.email.dirty,
+                    'is-valid': registrationFormGroup.controls.email.valid && registrationFormGroup.controls.email.dirty
+               }" />
+          <hr />
+          <label for="inputFirstName" class="sr-only">First Name</label>
+          <input type="text" name="inputFirstName" class="form-control" placeholder="First Name" formControlName="firstName"
+                 [ngClass]="{
+                    'is-invalid': registrationFormGroup.controls.firstName.invalid && registrationFormGroup.controls.firstName.dirty,
+                    'is-valid': registrationFormGroup.controls.firstName.valid && registrationFormGroup.controls.firstName.dirty
+               }" />
+          <label for="inputLastName" class="sr-only">Last Name</label>
+          <input type="text" name="inputLastName" class="form-control" placeholder="Last Name" formControlName="lastName"
+                 [ngClass]="{
+                    'is-invalid': registrationFormGroup.controls.lastName.invalid && registrationFormGroup.controls.lastName.dirty,
+                    'is-valid': registrationFormGroup.controls.lastName.valid && registrationFormGroup.controls.lastName.dirty
+               }" />
+          <hr />
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input type="password" name="inputPassword" class="form-control" placeholder="Password" formControlName="password"
+                 [ngClass]="{
+                    'is-invalid': registrationFormGroup.controls.password.invalid && registrationFormGroup.controls.password.dirty,
+                    'is-valid': registrationFormGroup.controls.password.valid && registrationFormGroup.controls.password.dirty
+               }" />
+          <label for="inputPasswordConfirm" class="sr-only">Password</label>
+          <input type="password" name="inputPasswordConfirm" class="form-control" placeholder="Confirm Password" formControlName="passwordConfirm"
+                 [ngClass]="{
+                    'is-invalid': registrationFormGroup.controls.passwordConfirm.invalid && registrationFormGroup.controls.passwordConfirm.dirty
+                                    || registrationFormGroup.errors?.invalid,
+                    'is-valid': registrationFormGroup.controls.passwordConfirm.valid && registrationFormGroup.controls.passwordConfirm.dirty
+                                    && !registrationFormGroup.errors?.invalid
+               }" />
+          <hr />
+          <button class="btn btn-lg btn-primary btn-block" [disabled]="registrationFormGroup.invalid" (click)="register()">Register</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+

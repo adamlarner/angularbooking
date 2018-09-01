@@ -1,0 +1,45 @@
+<div class="row p-4" *ngIf="venue">
+  <div class="col-2">
+    <img [src]="venue.image" alt="Venue Image" class="embed-responsive" />
+  </div>
+  
+  <div class="col-10">
+    
+    <div class="row">
+      <div class="col-8">
+        <h3>{{ venue.name }} <small style="font-size:14px;">{{ venue.address1 }}, {{ venue.address2 }}, {{ venue.address3 }}, {{ venue.address4 }}, {{ venue.address5 }}, {{ venue.contactPhone }}</small></h3>
+        <p>{{ venue.description }}</p>
+        <hr />
+        <div class="row">
+          <div class="col-6">
+            <span ngbTooltip="Toilets" *ngIf="hasFacility(venue.facilities, 1)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.03em; font-family: sans-serif; font-size: 12px;" class="fa fa-stack-1x fa-inverse">WC</i></span>
+            <span ngbTooltip="Parking" *ngIf="hasFacility(venue.facilities, 2)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.03em;" class="fa fa-car fa-stack-1x fa-inverse"></i></span>
+            <span ngbTooltip="Disabled Access" *ngIf="hasFacility(venue.facilities, 4)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.10em;" class="fa fa-wheelchair fa-stack-1x fa-inverse"></i></span>
+            <span ngbTooltip="Audio Description" *ngIf="hasFacility(venue.facilities, 8)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.03em;" class="fa fa-audio-description fa-stack-1x fa-inverse"></i></span>
+            <span ngbTooltip="Guide Dog Friendly" *ngIf="hasFacility(venue.facilities, 16)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.03em;" class="fa fa-paw fa-stack-1x fa-inverse"></i></span>
+            <span ngbTooltip="Subtitled" *ngIf="hasFacility(venue.facilities, 32)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.03em; font-family: sans-serif; font-size: 12px;" class="fa fa-stack-1x fa-inverse">SUB</i></span>
+            <span ngbTooltip="Bar" *ngIf="hasFacility(venue.facilities, 64)" class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i style="margin-left: 0.03em;" class="fa fa-glass fa-stack-1x fa-inverse"></i></span>
+          </div>
+          <div class="col-6 text-right">
+            <a class="mr-1" [href]="venue.website" *ngIf="venue.website"><i class="fa fa-2x fa-globe"></i></a>
+            <a class="mr-1" style="color: #3B5998" [href]="venue.facebook" *ngIf="venue.facebook"><i class="fa fa-2x fa-facebook-square"></i></a>
+            <a class="mr-1" style="color: #1DA1F2" [href]="venue.twitter" *ngIf="venue.twitter"><i class="fa fa-2x fa-twitter-square"></i></a>
+            <a class="mr-1" style="color: #262626" [href]="venue.instagram" *ngIf="venue.instagram"><i class="fa fa-2x fa-instagram"></i></a>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-4">
+        <img src="http://via.placeholder.com/350?text=Google+Map+image+here" alt="Google Map image here" class="embed-responsive" />
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <hr />
+    <span>
+      
+    </span>
+  </div>
+</div>
+
+

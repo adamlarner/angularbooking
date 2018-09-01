@@ -1,0 +1,15 @@
+<div class="container-fluid">
+  <div class="row mt-3">
+    <div class="col-sm-3 col-md-2 hidden-xs-down bg-faded">
+      <app-navbar></app-navbar>
+    </div>
+    <div class="col-sm-9 col-md-10">
+      <h5 class="m-1">{{ o.activatedRouteData.title }}</h5>
+      <hr />
+      <router-outlet #o="outlet"></router-outlet>
+    </div>
+  </div>
+</div>
+
+
+

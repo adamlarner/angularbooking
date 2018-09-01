@@ -1,0 +1,100 @@
+<p-toast position="top-center"></p-toast>
+<p-table #dt [columns]="cols" [value]="showings" selectionMode="single" [paginator]="true" [rows]="15">
+  <ng-template pTemplate="caption">
+    <div class="ui-g">
+      <div class="ui-g-4">
+        <div style="text-align:left">
+          <button type="button" pButton icon="fa fa-plus" (click)="showDialogToAdd()" label="Add"></button>
+        </div>
+      </div>
+      <div class="ui-g-8">
+        <div style="text-align: right">
+          <i class="fa fa-search" style="margin:4px 4px 0 0">&nbsp;</i>
+          <input type="text" pInputText size="25" placeholder="Filter" (input)="dt.filterGlobal($event.target.value, 'contains')" style="width:auto">
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th [pSortableColumn]="eventId">
+        Event
+        <p-sortIcon [field]="eventId"></p-sortIcon>
+      </th>
+      <th [pSortableColumn]="roomId">
+        Venue
+        <p-sortIcon [field]="roomId"></p-sortIcon>
+      </th>
+      <th [pSortableColumn]="startTime">
+        Start Time
+        <p-sortIcon [field]="startTime"></p-sortIcon>
+      </th>
+      <th style="width: 3em"></th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+    <tr [pSelectableRow]="rowData">
+      <td>{{getEventName(rowData["eventId"])}}</td>
+      <td>{{getVenueNameFromRoomId(rowData["roomId"])}}</td>
+      <td>{{rowData["startTime"]}}</td>
+      <td class="text-center"><a (click)="onRowEdit({ data: rowData })"><i class="fa fa-lg fa-edit"></i></a></td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog header="Showing Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true" [width]="600" [positionTop]="50">
+  <div class="ui-g ui-fluid" *ngIf="showingForm" [formGroup]="showingForm">
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="eventId">Event</label>
+      </div>
+      <div class="ui-g-8">
+        <select class="form-control" formControlName="eventId">
+          <option *ngFor="let event of events" [value]="event.id">{{ event.name }}</option>
+        </select>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="roomId">Room</label>
+      </div>
+      <div class="ui-g-8">        
+        <select class="form-control" formControlName="roomId">
+          <optgroup *ngFor="let venue of venues" [label]="venue.name">
+            <option *ngFor="let room of venue.rooms" [value]="room.id">{{ room.name }}</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+    <div class="ui-g-12">
+      <div class="ui-g-4">
+        <label class="col-form-label" for="pricingStrategyId">Pricing Strategy Id</label>
+      </div>
+      <div class="ui-g-8">        
+        <select class="form-control" formControlName="pricingStrategyId">
+          <option *ngFor="let pricingStrategy of pricingStrategies" [value]="pricingStrategy.id">{{ pricingStrategy.name }}</option>
+        </select>
+      </div>
+    </div>
+    <hr />
+    <div class="ui-g-12">
+      <div class="ui-g-6">
+        Start Time
+        <p-calendar showTime="true" [inline]="true" [utc]="true" formControlName="startTime"></p-calendar>
+      </div>
+      <div class="ui-g-6">
+        End Time
+        <p-calendar showTime="true" [inline]="true" [utc]="true" formControlName="endTime"></p-calendar>
+      </div>
+    </div>
+    
+
+  </div>
+  <p-footer>
+    <div class="ui-dialog-buttonpane ui-helper-clearfix">
+      <button *ngIf="!newShowing" type="button" pButton icon="fa fa-close" (click)="delete()" label="Delete"></button>
+      <label>{{ showingForm.controls.alreadyInUse }}</label>
+      <button [disabled]="!showingForm.valid || showingForm.controls.alreadyInUse" type="button" pButton icon="fa fa-check" (click)="save()" label="Save"></button>
+    </div>
+  </p-footer>
+</p-dialog>
